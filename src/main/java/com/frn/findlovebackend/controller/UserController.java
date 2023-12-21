@@ -6,8 +6,9 @@ import com.frn.findlovebackend.exception.BusinessException;
 import com.frn.findlovebackend.model.dto.UserLoginRequest;
 import com.frn.findlovebackend.model.dto.UserRegisterRequest;
 import com.frn.findlovebackend.model.entity.User;
+import com.frn.findlovebackend.model.vo.UserVO;
 import com.frn.findlovebackend.service.UserService;
-import org.springframework.stereotype.Controller;
+import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -65,6 +66,42 @@ public class UserController {
         User user = userService.login(userAccount, userPassword, httpServletRequest);
         return ResultUtils.success(user);
     }
+
+    /**
+     * 获取当前用户信息
+     * @param httpServletRequest
+     * @return
+     */
+    @GetMapping("/currentUser")
+    public BaseResponse<UserVO> getCurrentUser(HttpServletRequest httpServletRequest){
+        // 校验
+        if(httpServletRequest == null){
+            throw new BusinessException(PARAM_ERROR);
+        }
+        // 1.调用service层方法得到 currentUser
+        User loginUser = userService.getLoginUser(httpServletRequest);
+        // 2.封装脱敏对象
+        UserVO userVO = new UserVO();
+        BeanUtils.copyProperties(loginUser,userVO);
+        // 3.返回
+        return ResultUtils.success(userVO);
+    }
+
+    /**
+     * 用户注销
+     *
+     * @param request
+     * @return
+     */
+    @PostMapping("/logout")
+    public BaseResponse<Boolean> userLogout(HttpServletRequest request) {
+        if (request == null) {
+            throw new BusinessException(PARAM_ERROR);
+        }
+        boolean result = userService.userLogout(request);
+        return ResultUtils.success(result);
+    }
+
 
 
 

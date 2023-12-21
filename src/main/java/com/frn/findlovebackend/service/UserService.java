@@ -34,4 +34,6 @@ public interface UserService extends IService<User> {
     User getLoginUser(HttpServletRequest request);
 
     boolean isAdmin(HttpServletRequest request);
+
+    boolean userLogout(HttpServletRequest request);
 }

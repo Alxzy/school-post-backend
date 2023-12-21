@@ -19,6 +19,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.frn.findlovebackend.common.ErrorCode.OPERATION_ERROR;
 import static com.frn.findlovebackend.constant.UserConstant.ADMIN_ROLE;
 import static com.frn.findlovebackend.constant.UserConstant.USER_LOGIN_STATE;
 
@@ -163,6 +164,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         Object userObj = request.getSession().getAttribute(USER_LOGIN_STATE);
         User user = (User) userObj;
         return user != null && ADMIN_ROLE.equals(user.getUserRole());
+    }
+
+    @Override
+    public boolean userLogout(HttpServletRequest request) {
+        if (request.getSession().getAttribute(USER_LOGIN_STATE) == null) {
+            throw new BusinessException(OPERATION_ERROR, "未登录");
+        }
+        // 移除登录态
+        request.getSession().removeAttribute(USER_LOGIN_STATE);
+        return true;
     }
 
 

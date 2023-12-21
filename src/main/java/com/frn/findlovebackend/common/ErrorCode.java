@@ -13,6 +13,8 @@ public enum ErrorCode {
     NOT_LOGIN(40100,"未登录"),
     NO_AUTO(40101,"无权限"),
 
+    OPERATION_ERROR(40102,"操作有误"),
+
     SYSTEM_ERROR(50000,"系统内部异常");
     /**
      * 错误码
