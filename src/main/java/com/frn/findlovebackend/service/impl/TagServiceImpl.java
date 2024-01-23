@@ -24,6 +24,8 @@ import static com.frn.findlovebackend.constant.UserConstant.USER_LOGIN_STATE;
 public class TagServiceImpl extends ServiceImpl<TagMapper, Tag>
     implements TagService{
 
+    //region 增删改查
+
     @Override
     public long addTag(String tagName, String tagCategory, HttpServletRequest request) {
         // 1.校验是否登录 保险起见
@@ -100,6 +102,8 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag>
         }
         return b;
     }
+
+    // endregion
 }
 
 

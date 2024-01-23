@@ -1,5 +1,9 @@
 package com.frn.findlovebackend.model.enums;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * @author Administrator
  * @version 1.0
@@ -15,8 +19,8 @@ public enum TagCategoryEnum {
 
     private final String value;
 
-    TagCategoryEnum(String vale) {
-        this.value = vale;
+    TagCategoryEnum(String value) {
+        this.value = value;
     }
 
     public String getValue() {
@@ -30,5 +34,13 @@ public enum TagCategoryEnum {
             }
         }
         return false;
+    }
+
+    /**
+     * 获取值列表
+     * @return
+     */
+    public static List<String> getValues(){
+        return Arrays.stream(values()).map(item -> item.value).collect(Collectors.toList());
     }
 }
