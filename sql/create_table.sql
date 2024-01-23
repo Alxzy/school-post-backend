@@ -20,3 +20,18 @@ create table if not exists user
     constraint uni_userAccount
     unique (userAccount)
     ) comment '用户';
+
+-- 标签表
+create table if not exists tag
+(
+    id bigint auto_increment comment 'id' primary key,
+    category     varchar(256)                           null comment '分类',
+    tagName      varchar(256)                           not null comment '标签名称',
+    postNum      int             default 0              not null comment '帖子使用标签次数',
+    userId       bigint                                 not null comment '创建用户 id',
+    createTime   datetime     default CURRENT_TIMESTAMP not null comment '创建时间',
+    updateTime   datetime     default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
+    isDelete     tinyint      default 0                 not null comment '是否删除',
+    constraint uni_tagName
+        unique (tagName)
+) comment '标签';

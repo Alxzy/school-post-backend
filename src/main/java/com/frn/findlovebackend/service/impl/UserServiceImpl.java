@@ -36,10 +36,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
     @Resource
     UserMapper userMapper;
+
     /**
      * 盐值，混淆密码
      */
-    private final String SALT = "furina";
+    public static final String SALT = "furina";
     @Override
     public long register(String userAccount, String userPassword, String checkPassword) {
        // 1.校验数据
@@ -175,6 +176,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         request.getSession().removeAttribute(USER_LOGIN_STATE);
         return true;
     }
+
 
 
 }
