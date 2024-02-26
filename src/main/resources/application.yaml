@@ -6,10 +6,18 @@ spring:
     password: root
   application:
     name: findlove-backend
+  # 默认 dev 环境
+  profiles:
+    active: dev
+
 server:
   port: 8080
   servlet:
     context-path: '/api'
+    # session 失效时间 1 天
+    session:
+      timeout: 86400
+
 mybatis-plus:
   configuration:
     map-underscore-to-camel-case: false

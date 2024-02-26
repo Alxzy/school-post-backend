@@ -10,8 +10,9 @@ import java.io.Serializable;
  */
 @Data
 public class UserAddRequest  implements Serializable {
-    private static final long serialVersionUID = -1245770954057240423L;
 
+
+    private static final long serialVersionUID = -2079854746085213428L;
     /**
      * 用户昵称
      */

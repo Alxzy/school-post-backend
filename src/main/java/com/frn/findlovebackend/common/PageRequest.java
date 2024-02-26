@@ -25,10 +25,10 @@ public class PageRequest {
     /**
      * 排序字段
      */
-    private String sortedField;
+    private String sortField;
 
     /**
      * 排序顺序(默认升序)
      */
-    private String sortedOrder = SORT_ORDER_ASC;
+    private String sortOrder = SORT_ORDER_ASC;
 }

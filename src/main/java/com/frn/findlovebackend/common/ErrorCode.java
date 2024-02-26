@@ -14,7 +14,7 @@ public enum ErrorCode {
     NO_AUTO(40101,"无权限"),
 
     OPERATION_ERROR(40102,"操作有误"),
-
+    NOT_FOUND_ERROR(40103,"操作对象不存在"),
     SYSTEM_ERROR(50000,"系统内部异常");
     /**
      * 错误码

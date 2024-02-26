@@ -118,7 +118,7 @@ public class TagController {
      * @return
      */
     @GetMapping("/category/map")
-    @AuthCheck(mustRole = "admin")
+
     public BaseResponse<Map<String, List<Tag>>> getTagMap() {
         // 1.获取标签列表
         List<Tag> tagList = tagService.list();
