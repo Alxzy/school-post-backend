@@ -236,6 +236,7 @@ public class PostController {
         Post postQuery = new Post();
         BeanUtils.copyProperties(postQueryRequest, postQuery);
         // content 需支持模糊搜索
+        String content = postQuery.getContent();
         postQuery.setContent(null);
         // 如果是管理员,则不用设置而为已通过,设置 状态为 已通过审核
         if (!userService.isAdmin(request)) {
@@ -252,7 +253,7 @@ public class PostController {
         // 3.2 设置顺序
         postQueryWrapper.orderBy(StringUtils.isNotBlank(sortField),
                 sortOrder.equals(CommonConstant.SORT_ORDER_ASC), sortField);
-
+        postQueryWrapper.like(StringUtils.isNotBlank(content),"content",content);
         // 3.3 查询
         Page<Post> postPage = postService.page(new Page<>(current, pageSize), postQueryWrapper);
         // 3.4 设置默认点赞状态为 false
@@ -263,7 +264,18 @@ public class PostController {
             return postVO;
             // 必须维持原有的顺序
         }).collect(Collectors.groupingBy(PostVO::getId, LinkedHashMap::new, Collectors.toList()));
-        // 4.如果登录,获取点赞状态 todo
+        // 4.如果登录,获取点赞状态
+        try {
+            User user = userService.getLoginUser(request);
+            QueryWrapper<PostThumb> postThumbQueryWrapper = new QueryWrapper<>();
+            postThumbQueryWrapper.in("postId", postIdListMap.keySet());
+            postThumbQueryWrapper.eq("userId", user.getId());
+            List<PostThumb> postThumbList = postThumbService.list(postThumbQueryWrapper);
+            postThumbList.forEach(postThumb ->
+                    postIdListMap.get(postThumb.getPostId()).get(0).setHasThumb(true));
+        } catch (Exception e) {
+            // 用户未登录，不处理
+        }
 
         // 5.数据脱敏,并返回
         Page<PostVO> postVOPage = new Page<>(postPage.getCurrent(), postPage.getSize(), postPage.getTotal());
