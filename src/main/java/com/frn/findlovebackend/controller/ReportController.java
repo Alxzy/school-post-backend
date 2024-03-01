@@ -8,7 +8,7 @@ import com.frn.findlovebackend.common.DeleteRequest;
 import com.frn.findlovebackend.common.ErrorCode;
 import com.frn.findlovebackend.common.ResultUtils;
 import com.frn.findlovebackend.constant.CommonConstant;
-import com.frn.findlovebackend.exception.BusinessException;
+import com.frn.findlovebackend.exception.BussinessException;
 import com.frn.findlovebackend.model.dto.*;
 import com.frn.findlovebackend.model.entity.Post;
 import com.frn.findlovebackend.model.entity.Report;
@@ -58,7 +58,7 @@ public class ReportController {
         // 1.非参数校验
         // 1.1 请求体是否为空
         if(reportAddRequest == null){
-            throw new BusinessException(ErrorCode.PARAM_ERROR);
+            throw new BussinessException(ErrorCode.PARAM_ERROR);
         }
         // 1.2 获取参数
         Long reportedPostId = reportAddRequest.getReportedPostId();
@@ -67,18 +67,18 @@ public class ReportController {
         // 2.1 必须登录
         User loginUser = userService.getLoginUser(request);
         if(loginUser == null){
-            throw new BusinessException(ErrorCode.NO_AUTO,"未登录");
+            throw new BussinessException(ErrorCode.NO_AUTO,"未登录");
         }
         Long userId = loginUser.getId();
         // 3.参数校验
         // 3.1举报内容不能过长
         if(StringUtils.isNotBlank(content) && content.length() > 8192){
-            throw new BusinessException(ErrorCode.PARAM_ERROR,"内容过长");
+            throw new BussinessException(ErrorCode.PARAM_ERROR,"内容过长");
         }
         // 3.2举报帖子的id必须存在
         Post post = postService.getById(reportedPostId);
         if(post == null){
-            throw new BusinessException(ErrorCode.PARAM_ERROR,"举报对象不存在");
+            throw new BussinessException(ErrorCode.PARAM_ERROR,"举报对象不存在");
         }
         Long reportedUserId = post.getUserId();
 
@@ -92,7 +92,7 @@ public class ReportController {
 
         boolean result = reportService.save(report);
         if(!result){
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR);
+            throw new BussinessException(ErrorCode.SYSTEM_ERROR);
         }
         // 5.返回
         return ResultUtils.success(report.getId());
@@ -108,23 +108,23 @@ public class ReportController {
         // 1.参数校验
         // 1.1 非空
         if (deleteRequest == null || request == null) {
-            throw new BusinessException(ErrorCode.PARAM_ERROR);
+            throw new BussinessException(ErrorCode.PARAM_ERROR);
         }
         // 1.2 业务校验 对应id的帖子是否存在
         Long reportId = deleteRequest.getId();
         Report report = reportService.getById(reportId);
         if (report == null) {
-            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+            throw new BussinessException(ErrorCode.NOT_FOUND_ERROR);
         }
         // 1.3 权限校验 仅本人和管理员可以删除
         User currentLoginUser = userService.getLoginUser(request);
         if (!userService.isAdmin(request) && !report.getUserId().equals(currentLoginUser.getId())) {
-            throw new BusinessException(ErrorCode.NO_AUTO);
+            throw new BussinessException(ErrorCode.NO_AUTO);
         }
         // 2.删除
         boolean result = reportService.removeById(reportId);
         if(!result){
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR);
+            throw new BussinessException(ErrorCode.SYSTEM_ERROR);
         }
         // 3.返回
         return ResultUtils.success(result);
@@ -135,38 +135,38 @@ public class ReportController {
         // 1.参数校验
         // 1.1 非空
         if (request == null || reportUpdateRequest == null || reportUpdateRequest.getId() <= 0) {
-            throw new BusinessException(ErrorCode.PARAM_ERROR);
+            throw new BussinessException(ErrorCode.PARAM_ERROR);
         }
         // 1.2 业务校验
         // 实体存在
         long reportId = reportUpdateRequest.getId();
         Report oldReport = reportService.getById(reportId);
         if (oldReport == null) {
-            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+            throw new BussinessException(ErrorCode.NOT_FOUND_ERROR);
         }
         // 1.2 内容不能过长
         Report report = new Report();
         BeanUtils.copyProperties(reportUpdateRequest,report);
         String content = report.getContent();
         if(StringUtils.isNotBlank(content) && content.length() > 8192){
-            throw new BusinessException(ErrorCode.PARAM_ERROR,"内容过长");
+            throw new BussinessException(ErrorCode.PARAM_ERROR,"内容过长");
         }
         // 1.2 状态必须被包含
         Integer status = report.getStatus();
         if(status == null){// 不能为空
-            throw new BusinessException(ErrorCode.PARAM_ERROR);
+            throw new BussinessException(ErrorCode.PARAM_ERROR);
         }
         if(status != null && !ReportStatusEnum.getValues().contains(status)){// 必须被包含
-            throw new BusinessException(ErrorCode.PARAM_ERROR);
+            throw new BussinessException(ErrorCode.PARAM_ERROR);
         }
         // 1.3 权限校验
         User currentLoginUser = userService.getLoginUser(request);
         if (!userService.isAdmin(request) && !oldReport.getUserId().equals(currentLoginUser.getId())) {
-            throw new BusinessException(ErrorCode.NO_AUTO);
+            throw new BussinessException(ErrorCode.NO_AUTO);
         }
         // 只有管理员可以修改 状态
         if (!oldReport.getStatus().equals(status) && !userService.isAdmin(request)) {
-            throw new BusinessException(ErrorCode.NO_AUTO);
+            throw new BussinessException(ErrorCode.NO_AUTO);
         }
 
         // 2.按照举报id修改
@@ -186,11 +186,11 @@ public class ReportController {
     public BaseResponse<Report> getReportById(Long id) {
         // 参数校验
         if (id <= 0) {
-            throw new BusinessException(ErrorCode.PARAM_ERROR);
+            throw new BussinessException(ErrorCode.PARAM_ERROR);
         }
         Report report = reportService.getById(id);
         if(report == null){
-            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+            throw new BussinessException(ErrorCode.NOT_FOUND_ERROR);
         }
         return ResultUtils.success(report);
     }
@@ -200,7 +200,7 @@ public class ReportController {
     public BaseResponse<List<Report>> listReport(ReportQueryRequest reportQueryRequest) {
         // 1.参数校验
         if (reportQueryRequest == null) {
-            throw new BusinessException(ErrorCode.PARAM_ERROR);
+            throw new BussinessException(ErrorCode.PARAM_ERROR);
         }
         // 2.填充查询对象
         Report reportQuery = new Report();
@@ -221,7 +221,7 @@ public class ReportController {
     public BaseResponse<Page<Report>> listReportByPage(ReportQueryRequest reportQueryRequest) {
         // 1.参数校验
         if (reportQueryRequest == null) {
-            throw new BusinessException(ErrorCode.PARAM_ERROR);
+            throw new BussinessException(ErrorCode.PARAM_ERROR);
         }
         // 2.填充查询对象
         Report reportQuery = new Report();
@@ -237,7 +237,7 @@ public class ReportController {
         reportQuery.setContent(null);
         // 2.2 业务 限制爬虫
         if (pageSize > 50) {
-            throw new BusinessException(ErrorCode.PARAM_ERROR);
+            throw new BussinessException(ErrorCode.PARAM_ERROR);
         }
 
         // 3.查询

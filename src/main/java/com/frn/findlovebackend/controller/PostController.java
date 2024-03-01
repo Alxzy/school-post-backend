@@ -8,7 +8,7 @@ import com.frn.findlovebackend.common.DeleteRequest;
 import com.frn.findlovebackend.common.ErrorCode;
 import com.frn.findlovebackend.common.ResultUtils;
 import com.frn.findlovebackend.constant.CommonConstant;
-import com.frn.findlovebackend.exception.BusinessException;
+import com.frn.findlovebackend.exception.BussinessException;
 import com.frn.findlovebackend.model.dto.PostAddRequest;
 import com.frn.findlovebackend.model.dto.PostQueryRequest;
 import com.frn.findlovebackend.model.dto.PostThumbRequest;
@@ -79,7 +79,7 @@ public class PostController {
         // 1.参数校验
         // 1.1 非业务
         if (postAddRequest == null) {
-            throw new BusinessException(ErrorCode.PARAM_ERROR);
+            throw new BussinessException(ErrorCode.PARAM_ERROR);
         }
         // 1.2 业务校验 方法
         Post post = new Post();
@@ -89,13 +89,13 @@ public class PostController {
         // 2.添加当前用户id
         User currentLoginUser = userService.getLoginUser(request);
         if (currentLoginUser == null) {
-            throw new BusinessException(ErrorCode.NOT_LOGIN);
+            throw new BussinessException(ErrorCode.NOT_LOGIN);
         }
         post.setUserId(currentLoginUser.getId());
         // 3.添加到数据库
         boolean result = postService.save(post);
         if (!result) {
-            throw new BusinessException(ErrorCode.OPERATION_ERROR);
+            throw new BussinessException(ErrorCode.OPERATION_ERROR);
         }
         Long id = post.getId();
         // 4.移除缓存
@@ -115,18 +115,18 @@ public class PostController {
         // 1.参数校验
         // 1.1 非空
         if (deleteRequest == null || request == null) {
-            throw new BusinessException(ErrorCode.PARAM_ERROR);
+            throw new BussinessException(ErrorCode.PARAM_ERROR);
         }
         // 1.2 业务校验 对应id的帖子是否存在
         Long postId = deleteRequest.getId();
         Post post = postService.getById(postId);
         if (post == null) {
-            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+            throw new BussinessException(ErrorCode.NOT_FOUND_ERROR);
         }
         // 1.3 权限校验 仅本人和管理员可以删除
         User currentLoginUser = userService.getLoginUser(request);
         if (!userService.isAdmin(request) && !post.getUserId().equals(currentLoginUser.getId())) {
-            throw new BusinessException(ErrorCode.NO_AUTO);
+            throw new BussinessException(ErrorCode.NO_AUTO);
         }
         // 2.删除
         boolean result = postService.removeById(postId);
@@ -139,7 +139,7 @@ public class PostController {
             boolean isRemoved = postThumbService.remove(queryWrapper);
             if(!isRemoved) {
                 log.error("postThumb delete failed, postId = {}", postId);
-                throw new BusinessException(ErrorCode.SYSTEM_ERROR);
+                throw new BussinessException(ErrorCode.SYSTEM_ERROR);
             }
         },ioExecutorService);
         // 5.返回
@@ -151,25 +151,25 @@ public class PostController {
         // 1.参数校验
         // 1.1 非空
         if (request == null || postUpdateRequest == null) {
-            throw new BusinessException(ErrorCode.PARAM_ERROR);
+            throw new BussinessException(ErrorCode.PARAM_ERROR);
         }
         // 1.2 业务校验
         // 帖子存在
         long postId = postUpdateRequest.getId();
         Post post = postService.getById(postId);
         if (post == null) {
-            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+            throw new BussinessException(ErrorCode.NOT_FOUND_ERROR);
         }
         // 是否合法
         postService.validPost(post, false);
         // 1.3 权限校验
         User currentLoginUser = userService.getLoginUser(request);
         if (!userService.isAdmin(request) && !post.getUserId().equals(currentLoginUser.getId())) {
-            throw new BusinessException(ErrorCode.NO_AUTO);
+            throw new BussinessException(ErrorCode.NO_AUTO);
         }
         // 只有管理员可以修改 状态
         if (!post.getReviewStatus().equals(postUpdateRequest.getReviewStatus()) && !userService.isAdmin(request)) {
-            throw new BusinessException(ErrorCode.NO_AUTO);
+            throw new BussinessException(ErrorCode.NO_AUTO);
         }
         Post newPost = new Post();
         BeanUtils.copyProperties(postUpdateRequest, newPost);
@@ -191,7 +191,7 @@ public class PostController {
     public BaseResponse<Post> getPostById(Long id) {
         // 参数校验
         if (id <= 0) {
-            throw new BusinessException(ErrorCode.PARAM_ERROR);
+            throw new BussinessException(ErrorCode.PARAM_ERROR);
         }
         Post post = postGetCache.get(id);
         return ResultUtils.success(post);
@@ -202,7 +202,7 @@ public class PostController {
     public BaseResponse<List<Post>> listPost(PostQueryRequest postQueryRequest) {
         // 1.参数校验
         if (postQueryRequest == null) {
-            throw new BusinessException(ErrorCode.PARAM_ERROR);
+            throw new BussinessException(ErrorCode.PARAM_ERROR);
         }
         // 2.填充查询对象
         Post postQuery = new Post();
@@ -225,12 +225,12 @@ public class PostController {
         // 1.参数校验
         // 1.1 非空
         if (postQueryRequest == null || request == null) {
-            throw new BusinessException(ErrorCode.PARAM_ERROR);
+            throw new BussinessException(ErrorCode.PARAM_ERROR);
         }
         // 1.2 业务 限制爬虫
         long pageSize = postQueryRequest.getPageSize();
         if (pageSize > 50) {
-            throw new BusinessException(ErrorCode.PARAM_ERROR);
+            throw new BussinessException(ErrorCode.PARAM_ERROR);
         }
         // 2.填充查询对象
         Post postQuery = new Post();
@@ -297,12 +297,12 @@ public class PostController {
         // 无业务参数校验
         Long postId = postThumbRequest.getPostId();
         if (postThumbRequest == null || postId <= 0) {
-            throw new BusinessException(ErrorCode.PARAM_ERROR);
+            throw new BussinessException(ErrorCode.PARAM_ERROR);
         }
         // 必须登录 获取用户id
         User loginUser = userService.getLoginUser(request);
         if (loginUser == null) {// 未登录
-            throw new BusinessException(ErrorCode.NOT_LOGIN);
+            throw new BussinessException(ErrorCode.NOT_LOGIN);
         }
         int result = postThumbService.doThumb(loginUser, postId);
         if (result != 0) {

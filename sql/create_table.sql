@@ -83,3 +83,14 @@ create table if not exists report
     updateTime     datetime default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
     isDelete       tinyint  default 0                 not null comment '是否删除'
 ) comment '举报';
+
+-- 搜索记录表
+create table if not exists search_history
+(
+    id         bigint auto_increment comment 'id' primary key,
+    num        int                                not null comment '搜索记录数',
+    word       varchar(512)                       not null comment '搜索关键字',
+    createTime datetime default CURRENT_TIMESTAMP not null comment '创建时间',
+    updateTime datetime default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
+    isDelete   tinyint  default 0                 not null comment '是否删除'
+) comment '搜索记录';

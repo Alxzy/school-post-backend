@@ -3,7 +3,7 @@ package com.frn.findlovebackend.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.frn.findlovebackend.common.ErrorCode;
-import com.frn.findlovebackend.exception.BusinessException;
+import com.frn.findlovebackend.exception.BussinessException;
 import com.frn.findlovebackend.model.entity.Tag;
 import com.frn.findlovebackend.model.entity.User;
 import com.frn.findlovebackend.model.enums.TagCategoryEnum;
@@ -32,20 +32,20 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag>
         Object userObj = request.getSession().getAttribute(USER_LOGIN_STATE);
         User currentUser = (User) userObj;
         if (currentUser == null || currentUser.getId() == null) {
-            throw new BusinessException(ErrorCode.NOT_LOGIN);
+            throw new BussinessException(ErrorCode.NOT_LOGIN);
         }
 
         // 2.校验标签组和标签名称是否存在
         // 标签组
         if(!TagCategoryEnum.contains(tagCategory)){
-            throw new BusinessException(ErrorCode.PARAM_ERROR,"标签分组不存在");
+            throw new BussinessException(ErrorCode.PARAM_ERROR,"标签分组不存在");
         }
         // 标签名称
         QueryWrapper queryWrapper = new QueryWrapper();
         queryWrapper.eq("tagName",tagName);
         long count = this.count(queryWrapper);
         if(count > 0){
-            throw new BusinessException(ErrorCode.PARAM_ERROR,"标签名称已存在");
+            throw new BussinessException(ErrorCode.PARAM_ERROR,"标签名称已存在");
         }
         // 设置登录用户id等属性,封装Tag对象并保存
         Tag tag = new Tag();
@@ -55,7 +55,7 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag>
 
         boolean isSuccess = save(tag);
         if(!isSuccess) {
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "添加失败,数据库发送错误");
+            throw new BussinessException(ErrorCode.SYSTEM_ERROR, "添加失败,数据库发送错误");
         }
         return tag.getId();
     }
@@ -64,7 +64,7 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag>
     public boolean deleteTagById(long id) {
         boolean b = this.removeById(id);
         if(!b){
-            throw new BusinessException(ErrorCode.PARAM_ERROR,"标签id不存在或者数据库错误,删除失败");
+            throw new BussinessException(ErrorCode.PARAM_ERROR,"标签id不存在或者数据库错误,删除失败");
         }
         return b;
     }
@@ -75,20 +75,20 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag>
         Object userObj = request.getSession().getAttribute(USER_LOGIN_STATE);
         User currentUser = (User) userObj;
         if (currentUser == null || currentUser.getId() == null) {
-            throw new BusinessException(ErrorCode.NOT_LOGIN);
+            throw new BussinessException(ErrorCode.NOT_LOGIN);
         }
 
         // 2.校验标签组和标签名称是否存在
         // 标签组
         if(!TagCategoryEnum.contains(tagCategory)){
-            throw new BusinessException(ErrorCode.PARAM_ERROR,"标签分组不存在");
+            throw new BussinessException(ErrorCode.PARAM_ERROR,"标签分组不存在");
         }
         // 标签名称
         QueryWrapper queryWrapper = new QueryWrapper();
         queryWrapper.eq("tagName",tagName);
         long count = this.count(queryWrapper);
         if(count > 0){
-            throw new BusinessException(ErrorCode.PARAM_ERROR,"标签名称已存在");
+            throw new BussinessException(ErrorCode.PARAM_ERROR,"标签名称已存在");
         }
         // 设置登录用户id等属性,封装Tag对象并保存
         Tag tag = new Tag();
@@ -98,7 +98,7 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag>
         tag.setUserId(currentUser.getId());
         boolean b = this.updateById(tag);
         if(!b){
-            throw new BusinessException(ErrorCode.PARAM_ERROR,"标签id不存在或者数据库错误,修改失败");
+            throw new BussinessException(ErrorCode.PARAM_ERROR,"标签id不存在或者数据库错误,修改失败");
         }
         return b;
     }

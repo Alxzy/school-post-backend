@@ -3,7 +3,7 @@ package com.frn.findlovebackend.aop;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.frn.findlovebackend.annotation.AuthCheck;
 import com.frn.findlovebackend.common.ErrorCode;
-import com.frn.findlovebackend.exception.BusinessException;
+import com.frn.findlovebackend.exception.BussinessException;
 import com.frn.findlovebackend.model.entity.User;
 import com.frn.findlovebackend.service.UserService;
 import org.apache.commons.lang3.StringUtils;
@@ -51,14 +51,14 @@ public class AuthInteceptor {
         if (CollectionUtils.isNotEmpty(anyRole)) {
             String userRole = user.getUserRole();
             if (!anyRole.contains(userRole)) {
-                throw new BusinessException(ErrorCode.NO_AUTO);
+                throw new BussinessException(ErrorCode.NO_AUTO);
             }
         }
         // 必须有所有权限才通过
         if (StringUtils.isNotBlank(mustRole)) {
             String userRole = user.getUserRole();
             if (!mustRole.equals(userRole)) {
-                throw new BusinessException(ErrorCode.NO_AUTO);
+                throw new BussinessException(ErrorCode.NO_AUTO);
             }
         }
         // 通过权限校验，放行

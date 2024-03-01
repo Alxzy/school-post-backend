@@ -2,7 +2,7 @@ package com.frn.findlovebackend;
 
 import com.frn.findlovebackend.common.BaseResponse;
 import com.frn.findlovebackend.common.ResultUtils;
-import com.frn.findlovebackend.exception.BusinessException;
+import com.frn.findlovebackend.exception.BussinessException;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,7 +16,7 @@ class FindloveBackendApplicationTests {
 
     @Test
     void exceptionTest() {
-        BusinessException e = new BusinessException(PARAM_ERROR);
+        BussinessException e = new BussinessException(PARAM_ERROR);
         log.error("businessException: " + e.getMessage(), e);
         BaseResponse error = ResultUtils.error(e.getCode(), e.getMessage());
 

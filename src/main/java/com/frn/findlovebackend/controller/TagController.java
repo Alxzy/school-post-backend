@@ -8,7 +8,7 @@ import com.frn.findlovebackend.common.BaseResponse;
 import com.frn.findlovebackend.common.DeleteRequest;
 import com.frn.findlovebackend.common.ErrorCode;
 import com.frn.findlovebackend.common.ResultUtils;
-import com.frn.findlovebackend.exception.BusinessException;
+import com.frn.findlovebackend.exception.BussinessException;
 import com.frn.findlovebackend.model.dto.TagQueryRequest;
 import com.frn.findlovebackend.model.entity.Tag;
 import com.frn.findlovebackend.model.enums.TagCategoryEnum;
@@ -49,13 +49,13 @@ public class TagController {
     public BaseResponse<Long> addTag(@RequestBody Tag tag, HttpServletRequest request) {
         // 校验参数
         if (tag == null) {
-            throw new BusinessException(ErrorCode.PARAM_ERROR);
+            throw new BussinessException(ErrorCode.PARAM_ERROR);
         }
         String tagName = tag.getTagName();
         String category = tag.getCategory();
         // 校验
         if (StringUtils.isAnyBlank(tagName, category)) {
-            throw new BusinessException(ErrorCode.PARAM_ERROR);
+            throw new BussinessException(ErrorCode.PARAM_ERROR);
         }
         long tagId = tagService.addTag(tagName, category, request);
         // 清除缓存
@@ -69,11 +69,11 @@ public class TagController {
     public BaseResponse<Boolean> deleteTagById(@RequestBody DeleteRequest deleteRequest) {
         // 校验参数
         if (deleteRequest == null) {
-            throw new BusinessException(ErrorCode.PARAM_ERROR);
+            throw new BussinessException(ErrorCode.PARAM_ERROR);
         }
         Long id = deleteRequest.getId();
         if (id == null) {
-            throw new BusinessException(ErrorCode.PARAM_ERROR);
+            throw new BussinessException(ErrorCode.PARAM_ERROR);
         }
         boolean isSuccess = tagService.deleteTagById(id);
         // 清除缓存
@@ -86,14 +86,14 @@ public class TagController {
     public BaseResponse<Boolean> updateTag(@RequestBody Tag tag, HttpServletRequest request) {
         // 校验参数
         if (tag == null) {
-            throw new BusinessException(ErrorCode.PARAM_ERROR);
+            throw new BussinessException(ErrorCode.PARAM_ERROR);
         }
         String tagName = tag.getTagName();
         String category = tag.getCategory();
         Long id = tag.getId();
         // 校验
         if (StringUtils.isAnyBlank(tagName, category) || id == null) {
-            throw new BusinessException(ErrorCode.PARAM_ERROR);
+            throw new BussinessException(ErrorCode.PARAM_ERROR);
         }
         boolean isSuccess = tagService.updateTagById(id, tagName, category, request);
         // 清除缓存
@@ -123,7 +123,7 @@ public class TagController {
         // 1.获取标签列表
         List<Tag> tagList = tagService.list();
         if (tagList == null) {
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR);
+            throw new BussinessException(ErrorCode.SYSTEM_ERROR);
         }
         // 2.优先查找缓存,数据精简脱敏
         Map<String, List<Tag>> tagMap = tagMapCache.get(FULL_TAG_MAP_KEY, key -> tagList.stream().map(tag -> {
@@ -148,7 +148,7 @@ public class TagController {
     public BaseResponse<Page<Tag>> listTagsByPage(TagQueryRequest tagQueryRequest) {
         // 1.校验参数
         if(tagQueryRequest == null){
-            throw new BusinessException(ErrorCode.PARAM_ERROR);
+            throw new BussinessException(ErrorCode.PARAM_ERROR);
         }
         // 2.获取请求中的参数
         long current = tagQueryRequest.getCurrent();

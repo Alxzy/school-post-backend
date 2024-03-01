@@ -8,7 +8,7 @@ import com.frn.findlovebackend.common.BaseResponse;
 import com.frn.findlovebackend.common.DeleteRequest;
 import com.frn.findlovebackend.common.ErrorCode;
 import com.frn.findlovebackend.common.ResultUtils;
-import com.frn.findlovebackend.exception.BusinessException;
+import com.frn.findlovebackend.exception.BussinessException;
 import com.frn.findlovebackend.model.dto.*;
 import com.frn.findlovebackend.model.entity.User;
 import com.frn.findlovebackend.model.vo.UserVO;
@@ -45,7 +45,7 @@ public class UserController {
     public BaseResponse<Long> register(@RequestBody UserRegisterRequest userRegisterRequest){
         if(userRegisterRequest == null){
 //            return ResultUtils.error(PARAM_ERROR);
-            throw new BusinessException(PARAM_ERROR);
+            throw new BussinessException(PARAM_ERROR);
         }
         // 1.取出数据
         String userPassword = userRegisterRequest.getUserPassword();
@@ -53,7 +53,7 @@ public class UserController {
         String checkPassword = userRegisterRequest.getCheckPassword();
         // 2.非空校验
         if(userPassword == null || userAccount == null || checkPassword == null){
-            throw new BusinessException(PARAM_ERROR);
+            throw new BussinessException(PARAM_ERROR);
 //            return ResultUtils.error(PARAM_ERROR);
         }
         // 3.调用业务方法
@@ -64,7 +64,7 @@ public class UserController {
     @PostMapping("/login")
     public BaseResponse<User> register(@RequestBody UserLoginRequest userLoginRequest,HttpServletRequest httpServletRequest){
         if(userLoginRequest == null){
-            throw new BusinessException(PARAM_ERROR);
+            throw new BussinessException(PARAM_ERROR);
         }
         // 1.取出数据
         String userPassword = userLoginRequest.getUserPassword();
@@ -72,7 +72,7 @@ public class UserController {
 
         // 2.非空校验
         if(userPassword == null || userAccount == null){
-            throw new BusinessException(PARAM_ERROR);
+            throw new BussinessException(PARAM_ERROR);
 //            return ResultUtils.error(PARAM_ERROR);
         }
         // 3.调用业务方法
@@ -89,7 +89,7 @@ public class UserController {
     public BaseResponse<UserVO> getCurrentUser(HttpServletRequest httpServletRequest){
         // 校验
         if(httpServletRequest == null){
-            throw new BusinessException(PARAM_ERROR);
+            throw new BussinessException(PARAM_ERROR);
         }
         // 1.调用service层方法得到 currentUser
         User loginUser = userService.getLoginUser(httpServletRequest);
@@ -109,7 +109,7 @@ public class UserController {
     @PostMapping("/logout")
     public BaseResponse<Boolean> userLogout(HttpServletRequest request) {
         if (request == null) {
-            throw new BusinessException(PARAM_ERROR);
+            throw new BussinessException(PARAM_ERROR);
         }
         boolean result = userService.userLogout(request);
         return ResultUtils.success(result);
@@ -123,7 +123,7 @@ public class UserController {
     public BaseResponse<Long> addUser(@RequestBody UserAddRequest userAddRequest){
         // 非空校验
         if(userAddRequest == null){
-            throw new BusinessException(PARAM_ERROR);
+            throw new BussinessException(PARAM_ERROR);
         }
         // 1.拷贝数据到对象中
         User user = new User();
@@ -134,7 +134,7 @@ public class UserController {
         // 2.添加
         boolean result = userService.save(user);
         if(!result){
-            throw new BusinessException(ErrorCode.OPERATION_ERROR);
+            throw new BussinessException(ErrorCode.OPERATION_ERROR);
         }
         // 3.返回
         return ResultUtils.success(user.getId());
@@ -145,15 +145,15 @@ public class UserController {
     public BaseResponse<Boolean> deleteUserById(@RequestBody DeleteRequest deleteRequest){
         // 校验参数
         if(deleteRequest == null){
-            throw new BusinessException(ErrorCode.PARAM_ERROR);
+            throw new BussinessException(ErrorCode.PARAM_ERROR);
         }
         Long id = deleteRequest.getId();
         if(id == null){
-            throw new BusinessException(ErrorCode.PARAM_ERROR);
+            throw new BussinessException(ErrorCode.PARAM_ERROR);
         }
         boolean result = userService.removeById(id);
         if(!result){
-            throw new BusinessException(ErrorCode.OPERATION_ERROR);
+            throw new BussinessException(ErrorCode.OPERATION_ERROR);
         }
         return ResultUtils.success(result);
     }
@@ -163,7 +163,7 @@ public class UserController {
     public BaseResponse<Boolean> updateUserById(@RequestBody UserUpdateRequest updateRequest){
         // 校验参数
         if(updateRequest == null || updateRequest.getId() == null){
-            throw new BusinessException(ErrorCode.PARAM_ERROR);
+            throw new BussinessException(ErrorCode.PARAM_ERROR);
         }
         // 1.拷贝数据到对象中
         User user = new User();
@@ -174,7 +174,7 @@ public class UserController {
         // 2.修改
         boolean result = userService.updateById(user);
         if(!result){
-            throw new BusinessException(ErrorCode.OPERATION_ERROR);
+            throw new BussinessException(ErrorCode.OPERATION_ERROR);
         }
         // 3.返回
         return ResultUtils.success(result);
@@ -185,12 +185,12 @@ public class UserController {
     public BaseResponse<UserVO> getUserById(int id,HttpServletRequest request){
         // 校验参数
         if(id < 0 || request == null){
-            throw new BusinessException(ErrorCode.PARAM_ERROR);
+            throw new BussinessException(ErrorCode.PARAM_ERROR);
         }
         // 查询
         User user = userService.getById(id);
         if(user == null){
-            throw new BusinessException(ErrorCode.PARAM_ERROR,"没有对应的用户");
+            throw new BussinessException(ErrorCode.PARAM_ERROR,"没有对应的用户");
         }
         // 拷贝数据到对象中
         UserVO userVO = new UserVO();
@@ -210,7 +210,7 @@ public class UserController {
     public BaseResponse<List<UserVO>> listUsers(UserQueryRequest userQueryRequest){
         // 1.校验参数
         if(userQueryRequest == null){
-            throw new BusinessException(ErrorCode.PARAM_ERROR);
+            throw new BussinessException(ErrorCode.PARAM_ERROR);
         }
         // 2.赋值,相似查询
         User userQuery = new User();
@@ -243,7 +243,7 @@ public class UserController {
             current = userQueryRequest.getCurrent();
             size = userQueryRequest.getPageSize();
         }else{
-            throw new BusinessException(ErrorCode.PARAM_ERROR);
+            throw new BussinessException(ErrorCode.PARAM_ERROR);
         }
         // 2.查询
         QueryWrapper<User> userQueryWrapper = new QueryWrapper<>(userQuery);

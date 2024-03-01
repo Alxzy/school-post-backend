@@ -2,7 +2,7 @@ package com.frn.findlovebackend.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.frn.findlovebackend.common.ErrorCode;
-import com.frn.findlovebackend.exception.BusinessException;
+import com.frn.findlovebackend.exception.BussinessException;
 import com.frn.findlovebackend.model.entity.Post;
 import com.frn.findlovebackend.model.enums.PostGenderEnum;
 import com.frn.findlovebackend.model.enums.PostReviewStatusEnum;
@@ -24,7 +24,7 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post>
     @Override
     public void validPost(Post post, boolean add) {
         if (post == null) {
-            throw new BusinessException(ErrorCode.PARAM_ERROR);
+            throw new BussinessException(ErrorCode.PARAM_ERROR);
         }
         Integer age = post.getAge();
         Integer gender = post.getGender();
@@ -38,24 +38,24 @@ public class PostServiceImpl extends ServiceImpl<PostMapper, Post>
         if(add){
             // 创建时参数不能为空
             if(StringUtils.isAnyBlank(content,job,hobby,education,place,loveExp) || ObjectUtils.anyNull(age,gender)){
-                throw new BusinessException(ErrorCode.PARAM_ERROR);
+                throw new BussinessException(ErrorCode.PARAM_ERROR);
             }
         }
         // 内容不能过长
         if(StringUtils.isNotBlank(content) && content.length() > 8192){
-            throw new BusinessException(ErrorCode.PARAM_ERROR,"内容过长");
+            throw new BussinessException(ErrorCode.PARAM_ERROR,"内容过长");
         }
         // reviewStatus 必须为空或者合法
         if(reviewStatus != null && !PostReviewStatusEnum.getValues().contains(reviewStatus)){
-            throw new BusinessException(ErrorCode.PARAM_ERROR);
+            throw new BussinessException(ErrorCode.PARAM_ERROR);
         }
         // 年龄 >= 18 <= 100
         if(age != null && (age < 18 || age > 100)){
-            throw new BusinessException(ErrorCode.PARAM_ERROR,"年龄不符合要求");
+            throw new BussinessException(ErrorCode.PARAM_ERROR,"年龄不符合要求");
         }
         // 性别 必须合法
         if(gender != null && !PostGenderEnum.getValues().contains(gender)){
-            throw new BusinessException(ErrorCode.PARAM_ERROR,"性别不符合要求");
+            throw new BussinessException(ErrorCode.PARAM_ERROR,"性别不符合要求");
         }
     }
 }

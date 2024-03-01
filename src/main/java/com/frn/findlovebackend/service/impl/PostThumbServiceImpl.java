@@ -3,7 +3,7 @@ package com.frn.findlovebackend.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.frn.findlovebackend.common.ErrorCode;
-import com.frn.findlovebackend.exception.BusinessException;
+import com.frn.findlovebackend.exception.BussinessException;
 import com.frn.findlovebackend.model.entity.Post;
 import com.frn.findlovebackend.model.entity.PostThumb;
 import com.frn.findlovebackend.model.entity.User;
@@ -40,12 +40,12 @@ public class PostThumbServiceImpl extends ServiceImpl<PostThumbMapper, PostThumb
         // 1.1 帖子是否存在
         Post post = postService.getById(postId);
         if (post == null) {
-            throw new BusinessException(ErrorCode.PARAM_ERROR, "当前帖子不存在");
+            throw new BussinessException(ErrorCode.PARAM_ERROR, "当前帖子不存在");
         }
         // 1.2 帖子状态是否允许点赞(是否通过审核)
         Integer reviewStatus = post.getReviewStatus();
         if (reviewStatus != 1) {
-            throw new BusinessException(ErrorCode.OPERATION_ERROR, "帖子不允许被点赞");
+            throw new BussinessException(ErrorCode.OPERATION_ERROR, "帖子不允许被点赞");
         }
 
         Long userId = loginUser.getId();
@@ -83,7 +83,7 @@ public class PostThumbServiceImpl extends ServiceImpl<PostThumbMapper, PostThumb
                 // 返回变化数值
                 return update ? -1 : 0;
             } else {
-                throw new BusinessException(ErrorCode.SYSTEM_ERROR);
+                throw new BussinessException(ErrorCode.SYSTEM_ERROR);
             }
         } else {// 未点赞
             // 3.执行点赞操作
@@ -96,7 +96,7 @@ public class PostThumbServiceImpl extends ServiceImpl<PostThumbMapper, PostThumb
                 // 返回变化数值
                 return update ? 1 : 0;
             } else {
-                throw new BusinessException(ErrorCode.SYSTEM_ERROR);
+                throw new BussinessException(ErrorCode.SYSTEM_ERROR);
             }
         }
     }
